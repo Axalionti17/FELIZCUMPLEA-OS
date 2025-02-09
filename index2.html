@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre con Carta y Gatito</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #161515;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: white;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .sobre {
+            position: relative;
+            width: 90%;
+            max-width: 600px;
+            height: 600px; /* Aumentado de 400px a 600px */
+            background-color: #ffcc80;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            overflow: hidden;
+            transition: transform 0.3s ease-in-out;
+            cursor: pointer;
+        }
+
+        .tapa {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #ffb74d;
+            top: 0;
+            left: 0;
+            clip-path: polygon(0 0, 100% 0, 50% 50%);
+            transition: transform 0.5s;
+            z-index: 3;
+        }
+
+        .hoja {
+            position: absolute;
+            width: 90%;
+            height: 85%;
+            background-color: white;
+            top: 10%;
+            border-radius: 5px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            transition: transform 0.5s ease-in-out;
+            z-index: 2;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(0);
+        }
+
+        .sobre.active .tapa {
+            transform: rotateX(180deg);
+            transform-origin: top;
+        }
+
+        .sobre.active .hoja {
+            opacity: 1;
+        }
+
+        .hoja p {
+            font-size: clamp(14px, 3vw, 18px);
+            margin: 8px;
+            color: black;
+            font-weight: bold;
+            line-height: 1.4;
+        }
+
+        .hoja img {
+            width: clamp(150px, 30vw, 300px);
+            height: clamp(150px, 30vw, 300px);
+            margin-top: 15px;
+            object-fit: contain;
+        }
+
+        .contenido {
+            position: absolute;
+            bottom: 20px;
+            z-index: 1;
+        }
+
+        .contenido img {
+            width: clamp(120px, 25vw, 180px);
+            height: clamp(120px, 25vw, 180px);
+            transition: transform 0.5s;
+        }
+
+        #musicButton {
+            background-color: #ff4da6;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: clamp(10px, 2vw, 15px) clamp(20px, 4vw, 30px);
+            border-radius: 10px;
+            font-size: clamp(14px, 3vw, 1.2em);
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px #ff69b4;
+            transition: transform 0.3s ease;
+        }
+
+        #musicButton:hover {
+            transform: scale(1.1);
+        }
+
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .sobre {
+                height: 500px;
+                width: 90%;
+            }
+
+            .hoja {
+                padding: 15px;
+            }
+
+            .hoja p {
+                font-size: clamp(12px, 3vw, 16px);
+                margin: 6px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sobre {
+                height: 450px;
+                width: 95%;
+            }
+
+            .hoja {
+                padding: 10px;
+                height: 85%;
+            }
+
+            .hoja p {
+                font-size: clamp(11px, 3.5vw, 14px);
+                margin: 4px;
+            }
+
+            .hoja img {
+                width: clamp(120px, 25vw, 200px);
+                height: clamp(120px, 25vw, 200px);
+            }
+        }
+
+        /* Para pantallas muy pequeñas */
+        @media (max-width: 320px) {
+            .sobre {
+                height: 400px;
+            }
+
+            .hoja p {
+                margin: 3px;
+                font-size: 11px;
+            }
+        }
+
+        /* Para pantallas grandes */
+        @media (min-width: 1200px) {
+            .sobre {
+                max-width: 700px;
+                height: 700px;
+            }
+
+            .hoja p {
+                font-size: 18px;
+                margin: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button id="musicButton" onclick="playMusic()">🎵 Da clic aquí para escuchar y luego en el sobresito</button>
+
+    <div class="sobre" id="sobre">
+        <div class="tapa"></div>
+        <div class="hoja">
+            <p>Holaaaaa!!! Felices 20 años futuro ingeniero, te adoro mucho mucho.</p>
+            <p>¿Cómo te verás cuando cumplas 60? JAJA De seguro mamado JSJS (risa de pena).</p>
+            <p>Estoy muy orgullosa de ti, admiro mucho tu inteligencia para hacer las cosas rápidito. ¡Continúa así!, eres un niño increible ❤️</p>
+            <p>TE QUIERO MUCHOOO MUCHO CON PASITOS DE TORTUGA DE IDA Y VUELTA....</p>
+            <p><b>Atte: La casi futura ingeniera (si me lo permite el doctor JAJA)</b></p>
+            <img src="BONITO.jpeg" alt="Corazón animado">
+        </div>
+        <div class="contenido">
+            <img src="https://i.pinimg.com/originals/8b/a6/17/8ba6179997f5606a356ca07681367b6d.gif" alt="Cute Capoo GIF">
+        </div>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="audio.mp3" type="audio/mp3">
+    </audio>
+
+    <script>
+        const audio = document.getElementById('bgMusic');
+        const musicButton = document.getElementById('musicButton');
+        const sobre = document.getElementById('sobre');
+        let isMusicPlaying = false;
+
+        function playMusic() {
+            audio.play().then(() => {
+                isMusicPlaying = true;
+                musicButton.style.display = 'none';
+            }).catch(error => {
+                console.log("Error al reproducir el audio:", error);
+            });
+        }
+
+        sobre.addEventListener('click', () => {
+            sobre.classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

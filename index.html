@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>CUMPLEAÑOS MA</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #ffccdd;
+            color: aliceblue;
+            text-align: center;
+            overflow: hidden;
+            font-family: 'Indie Flower', cursive;
+        }
+        
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        
+        .container {
+            position: relative;
+            z-index: 2;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .header_text {
+            font-size: 3em;
+            margin: 20px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        .oval-button {
+            background-color: #ff4da6;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.5em;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            margin-top: 20px;
+            box-shadow: 0 0 10px #ff69b4;
+        }
+
+        .oval-button:hover {
+            background-color: #433d40;
+            transform: scale(1.1);
+        }
+
+        #musicControl {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 3;
+            padding: 10px;
+            background-color: #ff4da6;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px #ff69b4;
+            color: white;
+        }
+
+        #startButton {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 4;
+            padding: 20px 40px;
+            background-color: #ff4da6;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.5em;
+            cursor: pointer;
+            box-shadow: 0 0 20px #ff69b4;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 5px #4f73c0, 0 0 10px #2f2a2a, 0 0 15px #e60073, 0 0 20px #e60073;
+            }
+            to {
+                text-shadow: 0 0 10px #291650, 0 0 20px #333232, 0 0 30px #ff4da6, 0 0 40px #ff4da6;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="fireworks"></canvas>
+    <button id="startButton">¡Dale ahi clic para que escuches! 🎵</button>
+    <div class="container" id="mainContent">
+        <h1 class="header_text">Felices 20 años al niño más guapito</h1>
+        <img src="https://media.tenor.com/efbi1EpFlVUAAAAi/bugcat-capoo.gif" alt="Cute Capoo GIF">
+        <button class="oval-button" onclick="redirectToPage()">¡TE QUIERO MUCHO!</button>
+    </div>
+    
+    <audio id="bgMusic" loop>
+        <source src="audio.mp3" type="audio/mp3">
+    </audio>
+    <button id="musicControl" onclick="toggleMusic()">🔊</button>
+
+    <script>
+        // Inicialización del audio
+        const audio = document.getElementById('bgMusic');
+        const startButton = document.getElementById('startButton');
+        const mainContent = document.getElementById('mainContent');
+        const musicBtn = document.getElementById('musicControl');
+        let isMusicPlaying = false;
+
+        // Evento para iniciar el audio con interacción del usuario
+        startButton.addEventListener('click', function() {
+            audio.play().then(() => {
+                isMusicPlaying = true;
+                startButton.style.display = 'none';
+            }).catch(function(error) {
+                console.log("No se pudo reproducir el audio:", error);
+                startButton.style.display = 'none';
+            });
+        });
+
+        // También intentar reproducir cuando el usuario interactúe con la página
+        document.addEventListener('click', function initAudio() {
+            if (!isMusicPlaying) {
+                audio.play().then(() => {
+                    isMusicPlaying = true;
+                    startButton.style.display = 'none';
+                }).catch(() => {});
+            }
+            // Remover el evento después del primer clic
+            document.removeEventListener('click', initAudio);
+        });
+
+        function toggleMusic() {
+            if (isMusicPlaying) {
+                audio.pause();
+                musicBtn.textContent = '🔈';
+            } else {
+                audio.play();
+                musicBtn.textContent = '🔊';
+            }
+            isMusicPlaying = !isMusicPlaying;
+        }
+
+        function redirectToPage() {
+            window.location.href = 'index2.html';
+        }
+
+        // Código de los fuegos artificiales
+        const canvas = document.getElementById('fireworks');
+        const ctx = canvas.getContext('2d');
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
+        class Particle {
+            constructor(x, y, color, velocity, size = 2) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.velocity = velocity;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.01 + 0.005;
+                this.size = size;
+                this.trail = [];
+                this.maxTrailLength = 5;
+            }
+            
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                
+                for(let i = 0; i < this.trail.length; i++) {
+                    const pos = this.trail[i];
+                    const alpha = (i / this.trail.length) * this.alpha;
+                    ctx.beginPath();
+                    ctx.arc(pos.x, pos.y, this.size * (i / this.trail.length), 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.globalAlpha = alpha * 0.5;
+                    ctx.fill();
+                }
+                
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.alpha;
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                
+                ctx.restore();
+            }
+            
+            update() {
+                this.trail.push({x: this.x, y: this.y});
+                if(this.trail.length > this.maxTrailLength) {
+                    this.trail.shift();
+                }
+                
+                this.velocity.y += 0.05;
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                this.alpha -= this.decay;
+            }
+        }
+        
+        class Rocket {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.velocity = {
+                    x: (Math.random() - 0.5) * 2,
+                    y: -Math.random() * 5 - 10
+                };
+                this.color = '#ffffff';
+                this.trail = [];
+            }
+            
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                for(let pos of this.trail) {
+                    ctx.lineTo(pos.x, pos.y);
+                }
+                ctx.strokeStyle = this.color;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+            
+            update() {
+                this.trail.push({x: this.x, y: this.y});
+                if(this.trail.length > 20) this.trail.shift();
+                
+                this.velocity.y += 0.1;
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+            }
+        }
+        
+        let particles = [];
+        let rockets = [];
+        
+        const colors = ['#ff1493', '#ff4da6', '#ffffff', '#ff69b4', '#ffe4e1'];
+        
+        function createExplosion(x, y, color) {
+            const particleCount = 100;
+            const angleStep = (Math.PI * 2) / particleCount;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const angle = angleStep * i;
+                const speed = Math.random() * 3 + 2;
+                const velocity = {
+                    x: Math.cos(angle) * speed,
+                    y: Math.sin(angle) * speed
+                };
+                particles.push(new Particle(x, y, color, velocity, Math.random() * 2 + 1));
+            }
+        }
+
+        function createRocket() {
+            rockets.push(new Rocket(
+                Math.random() * canvas.width,
+                canvas.height
+            ));
+        }
+        
+        function createSpecialFirework() {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    createExplosion(
+                        centerX + (Math.random() - 0.5) * 200,
+                        centerY + (Math.random() - 0.5) * 200,
+                        color
+                    );
+                }, i * 200);
+            }
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.fillStyle = 'rgba(255, 204, 221, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            rockets = rockets.filter(rocket => {
+                rocket.update();
+                rocket.draw();
+                if(rocket.velocity.y >= 0) {
+                    createExplosion(rocket.x, rocket.y, colors[Math.floor(Math.random() * colors.length)]);
+                    return false;
+                }
+                return true;
+            });
+            
+            particles = particles.filter(particle => {
+                particle.update();
+                particle.draw();
+                return particle.alpha > 0;
+            });
+            
+            if (Math.random() < 0.03) {
+                createRocket();
+            }
+        }
+        
+        animate();
+        
+        canvas.addEventListener('click', (e) => {
+            createExplosion(e.clientX, e.clientY, colors[Math.floor(Math.random() * colors.length)]);
+        });
+    </script>
+</body>
+</html>
+
